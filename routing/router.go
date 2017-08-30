@@ -1,8 +1,9 @@
-package main
+package routing
 
 import (
 	"net/http"
 
+	"github.com/carlso70/go-todo/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -13,7 +14,7 @@ func NewRouter() *mux.Router {
 		var handler http.Handler
 
 		handler = route.HandlerFunc
-		handler = Logger(handler, route.Name)
+		handler = handlers.Logger(handler, route.Name)
 
 		router.
 			Methods(route.Method).

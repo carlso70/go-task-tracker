@@ -1,7 +1,9 @@
-package main
+package routing
 
 import (
 	"net/http"
+
+	"github.com/carlso70/go-todo/handlers"
 )
 
 // Route contains the name, method(GET,POST), pattern(URL),
@@ -20,24 +22,24 @@ var routes = Routes{
 		"Index",
 		"GET",
 		"/",
-		Index,
+		handlers.Index,
 	},
 	Route{
 		"TodoIndex",
 		"GET",
 		"/todos",
-		TodoIndex,
+		handlers.TodoIndex,
 	},
 	Route{
 		"TodoShow",
 		"GET",
 		"/todos/{todoId}",
-		TodoShow,
+		handlers.TodoShow,
 	},
 	Route{
 		"TodoCreate",
 		"POST",
 		"/todoCreate",
-		TodoCreate,
+		handlers.TodoCreate,
 	},
 }

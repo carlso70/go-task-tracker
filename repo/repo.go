@@ -1,6 +1,8 @@
-package main
+package repo
 
-import "fmt"
+import (
+	"fmt"
+)
 
 var currentId int
 
@@ -38,4 +40,8 @@ func RepoDestroyTodo(id int) error {
 		}
 	}
 	return fmt.Errorf("Could not find Todo with id of %d to delete", id)
+}
+
+func GetTodos() Todos {
+	return todos
 }

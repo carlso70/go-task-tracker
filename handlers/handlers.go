@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"encoding/json"
@@ -6,7 +6,9 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 
+	"github.com/carlso70/go-todo/repo"
 	"github.com/gorilla/mux"
 )
 
@@ -19,7 +21,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 func TodoIndex(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(todos); err != nil {
+	if err := json.NewEncoder(w).Encode(repo.GetTodos()); err != nil {
 		panic(err)
 	}
 }
@@ -27,13 +29,18 @@ func TodoIndex(w http.ResponseWriter, r *http.Request) {
 // TodoShow show todo
 func TodoShow(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	todoId := vars["todoId"]
-	fmt.Fprintln(w, "Todo show:", todoId)
+	todoId, err := strconv.Atoi(vars["todoId"])
+	if err != nil {
+		panic(err)
+	} else {
+		name := repo.RepoFindTodo(int(todoId)).Name
+		fmt.Fprintf(w, "TodoID:%d Todo:%s\n", todoId, name)
+	}
 }
 
 // TodoCreate create new todo
 func TodoCreate(w http.ResponseWriter, r *http.Request) {
-	var todo Todo
+	var todo repo.Todo
 	// LimitReader is good for preventing someone from sending 50 GBs of json
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
@@ -50,7 +57,7 @@ func TodoCreate(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	t := RepoCreateTodo(todo)
+	t := repo.RepoCreateTodo(todo)
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	w.WriteHeader(http.StatusCreated) // return 201 status code
 	if err := json.NewEncoder(w).Encode(t); err != nil {
